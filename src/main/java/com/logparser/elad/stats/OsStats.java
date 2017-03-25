@@ -35,6 +35,10 @@ public class OsStats {
         logger.info(osStats.toString());
     }
 
+    public ConcurrentHashMap<String, LongAdder> getOsStatsMap() {
+        return osStats;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("OsStats{");

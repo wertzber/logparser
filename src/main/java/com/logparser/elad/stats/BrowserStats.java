@@ -35,6 +35,10 @@ public class BrowserStats {
         logger.info(browserStats.toString());
     }
 
+    public ConcurrentHashMap<String, LongAdder> getBrowserStatsMap() {
+        return browserStats;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("BrowserStats{");
