@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<configuration debug="false">
+
+    <!-- enable basic JMX -->
+    <jmxConfigurator />
+
+    <!-- STDOUT -->
+    <appender name="LOGPARSER_STDOUT_BLOCKING" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date{ISO8601} %-5level %-100([%thread]- at %C{30}::%M\(%F:%L\))  %msg  |TAGS| %mdc%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="LOGPARSER_STDOUT" class="ch.qos.logback.classic.AsyncAppender" queueSize="8192">
+        <appender-ref ref="LOGPARSER_STDOUT_BLOCKING"/>
+
+    </appender>
+
+
+
+    <!-- root -->
+    <root>
+        <level value="DEBUG" />
+        <appender-ref ref="LOGPARSER_STDOUT" />
+    </root>
+
+</configuration>
