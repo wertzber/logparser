@@ -61,9 +61,12 @@ public class FlowManager {
                 }
             }
         }
+        //for last lines
+        uaExecutor.execute(new UAParser(parser, bulkOfLines, summary));
 
-//        summary.getOsStats().printOsStats();
-//        summary.getBrowserStats().printBrowserStats();
+
+
+
 
 
     }
