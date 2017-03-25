@@ -36,7 +36,7 @@ public class FileReader {
         try {
             if (currentLine.hasNext()) {
                 String line =  currentLine.nextLine();
-                logger.info(line);
+                logger.debug(line);
                 return Optional.of(line);
 
             } else {

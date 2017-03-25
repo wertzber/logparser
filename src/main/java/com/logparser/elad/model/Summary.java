@@ -1,5 +1,8 @@
 package com.logparser.elad.model;
 
+import com.logparser.elad.stats.BrowserStats;
+import com.logparser.elad.stats.OsStats;
+
 /**
  * Created by eladw on 3/25/17.
  * Summary of data
@@ -7,6 +10,15 @@ package com.logparser.elad.model;
 public class Summary {
 
     private long numOfReadRows = 0;
+    private OsStats osStats;
+    private BrowserStats browserStats;
+
+    public Summary(){
+        osStats = new OsStats();
+        browserStats = new BrowserStats();
+
+    }
+
 
     public long getNumOfReadRows() {
         return numOfReadRows;
@@ -17,4 +29,21 @@ public class Summary {
 
     }
 
+    public OsStats getOsStats() {
+        return osStats;
+    }
+
+    public BrowserStats getBrowserStats() {
+        return browserStats;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Summary{");
+        sb.append("numOfReadRows=").append(numOfReadRows);
+        sb.append(", osStats=").append(osStats);
+        sb.append(", browserStats=").append(browserStats);
+        sb.append('}');
+        return sb.toString();
+    }
 }

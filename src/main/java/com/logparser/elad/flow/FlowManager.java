@@ -2,11 +2,22 @@ package com.logparser.elad.flow;
 
 import com.logparser.elad.file.FileReader;
 import com.logparser.elad.model.Summary;
+import com.logparser.elad.model.UAParserFields;
 import com.logparser.elad.parser.UAParser;
+import net.sf.uadetector.UserAgentStringParser;
+import net.sf.uadetector.service.UADetectorServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by eladw on 3/25/17.
@@ -15,26 +26,44 @@ import java.util.Optional;
 public class FlowManager {
 
     private static final Logger logger = LoggerFactory.getLogger(FlowManager.class);
+    public static final int PRINT_PROGRESS = 300;
+    public static final int UA_PARSERS_THREADS = 10;
+    public static final int INITIAL_LINES_CAPACITY = 500;
 
     private FileReader fileReader;
     private Summary summary;
-    private UAParser uaParser;
+    ExecutorService uaExecutor = Executors.newFixedThreadPool(UA_PARSERS_THREADS); //start new thread pool
+    private UserAgentStringParser parser;
+
+
 
     public FlowManager(){
         fileReader = new FileReader("/Users/eladw/git/logparser/src/main/resources/all");
         summary = new Summary();
-        uaParser = new UAParser();
+        parser = UADetectorServiceFactory.getResourceModuleParser();
     }
 
     public void startFlow() {
-        while(true){ //todo - fix and make it more elegant
+
+        boolean stop = false;
+        List<String> bulkOfLines = new ArrayList<>(INITIAL_LINES_CAPACITY);
+        while(!stop){ //todo - fix and make it more elegant
             Optional<String> line = fileReader.getNextLine();
-            logger.info("So far read {} lines", summary.getNumOfReadRows());
-            if (!checkLineValidOutput(line)) return;
-            uaParser.prepareUAFields(line.get());
-
-
+            if(summary.getNumOfReadRows() % PRINT_PROGRESS == 0){
+                logger.info("So far read {} lines", summary.getNumOfReadRows());
+            }
+            if (!checkLineValidOutput(line)) {
+                stop=true;
+            } else {
+                bulkOfLines.add(line.get());
+                if(bulkOfLines.size() % INITIAL_LINES_CAPACITY == 0){
+                    uaExecutor.execute(new UAParser(parser, bulkOfLines, summary));
+                }
+            }
         }
+
+//        summary.getOsStats().printOsStats();
+//        summary.getBrowserStats().printBrowserStats();
 
 
     }
