@@ -27,6 +27,7 @@ public class IPStats {
         } catch (Exception e) {
             logger.error("failed to calculate ip statistics ", e );
         }
+        logger.debug(ipStats.toString());
 
     }
 

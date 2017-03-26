@@ -6,6 +6,7 @@ import com.logparser.elad.model.UAParserFields;
 import com.logparser.elad.parser.IPParser;
 import com.logparser.elad.parser.UAParser;
 import com.logparser.elad.report.Report;
+import com.sun.tools.javac.comp.Flow;
 import net.sf.uadetector.UserAgentStringParser;
 import net.sf.uadetector.service.UADetectorServiceFactory;
 import org.slf4j.Logger;
@@ -36,7 +37,8 @@ public class FlowManager {
 
     public static final int INITIAL_LINES_CAPACITY = 300;
     public static final int BULK_CAPACITY = 500;
-
+    public static final String DEFAULT_PATH = "/Users/eladw/git/logparser/src/main/resources/all10";
+    public static final int LACH_TIMEOUT = 120;
 
     private FileReader fileReader;
     private Summary summary;
@@ -48,24 +50,23 @@ public class FlowManager {
     public static CountDownLatch latch = new CountDownLatch(1);
 
 
-
-    public FlowManager(){
-
-        fileReader = new FileReader("/Users/eladw/git/logparser/src/main/resources/all10");
+    public FlowManager(String filePath){
+        fileReader = new FileReader(filePath);
         summary = new Summary();
         parser = UADetectorServiceFactory.getResourceModuleParser();
     }
+
+    public FlowManager(){
+        this(DEFAULT_PATH);
+
+    }
+
 
     public void startFlow() {
         long startTime = System.currentTimeMillis();
         boolean stop = false;
         List<String> bulkOfLines = new ArrayList<>(INITIAL_LINES_CAPACITY);
-        try {
-            long count = Files.lines(Paths.get(fileReader.getFilename())).count();
-            logger.info("Expect {} lines", count);
-        } catch (IOException e) {
-            logger.warn("Failed reading file", e);
-        }
+        countLinesForReference();
 
         while(!stop){ //todo - fix and make it more elegant
             Optional<String> line = fileReader.getNextLine();
@@ -85,13 +86,26 @@ public class FlowManager {
         ipExecutor.execute(new IPParser(bulkOfLines, summary));
 
         try {
-            latch.await(120, TimeUnit.SECONDS);
+            latch.await(LACH_TIMEOUT, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             logger.error("Latch wait failure", e);
         }
-        logger.info("Total exe time {} msec", System.currentTimeMillis() - startTime);
+        logger.info("Total app exe time {} msec", System.currentTimeMillis() - startTime);
         logger.info(Report.generateReport(summary));
 
+        uaExecutor.shutdown();
+        ipExecutor.shutdown();
+
+
+    }
+
+    private void countLinesForReference() {
+        try {
+            long count = Files.lines(Paths.get(fileReader.getFilename())).count();
+            logger.info("Expect {} lines", count);
+        } catch (IOException e) {
+            logger.warn("Failed reading file", e);
+        }
     }
 
     private boolean checkLineValidOutput(Optional<String> line) {

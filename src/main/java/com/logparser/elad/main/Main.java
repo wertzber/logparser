@@ -14,7 +14,16 @@ public class Main {
 
     public static void main(String[] args) {
         logger.info("logparser started");
+        String filePath = System.getProperty("file");
+
         FlowManager flowManager = new FlowManager();
+        if(filePath!=null){
+            flowManager = new FlowManager(filePath);
+
+        } else {
+            flowManager = new FlowManager();
+        }
         flowManager.startFlow();
+
     }
 }

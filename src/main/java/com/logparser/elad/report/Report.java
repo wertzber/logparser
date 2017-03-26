@@ -23,6 +23,8 @@ public class Report {
             sb.append(k).append(":").append(String.format("%.2f",  (v.longValue() / (double)totalOs.longValue())))
                     .append("\n");
         });
+        sb.append("================");
+
 
         AtomicLong totalBrowser = new AtomicLong(0);
         summary.getBrowserStats().getBrowserStatsMap().forEach((k, v) -> totalBrowser.accumulateAndGet(v.longValue(),
@@ -32,13 +34,14 @@ public class Report {
             sb.append(k).append(":").append(String.format("%.2f", (v.longValue() / (double) totalBrowser.longValue())))
                     .append("\n");
         });
+        sb.append("================");
 
         AtomicLong totalIps = new AtomicLong(0);
         summary.getIpStats().getIpStatsMap().forEach((k, v) -> totalIps.accumulateAndGet(v.longValue(),
                 (newNum, oldNum) -> newNum + oldNum));
         sb.append("Total IP stats:").append(totalIps).append("\n");
         summary.getIpStats().getIpStatsMap().forEach((k, v) -> {
-            sb.append(k).append(":").append(String.format("%.2f", (v.longValue() / (double) totalIps.longValue())))
+            sb.append(k).append(":").append(String.format("%.6f", (v.longValue() / (double) totalIps.longValue())))
                     .append("\n");
         });
 
