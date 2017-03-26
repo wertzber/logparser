@@ -1,9 +1,5 @@
 package com.logparser.elad.parser;
 
-//import net.sf.uadetector.*;
-//import net.sf.uadetector.service.UADetectorServiceFactory;
-
-
 import com.logparser.elad.flow.FlowManager;
 import com.logparser.elad.model.Summary;
 import com.logparser.elad.model.UAParserFields;
@@ -17,6 +13,7 @@ import java.util.List;
 
 /**
  * Created by eladw on 3/25/17.
+ * Runnable in charge of parsing the UA header.
  */
 public class UAParser implements Runnable {
 
@@ -36,15 +33,20 @@ public class UAParser implements Runnable {
     public void run(){
 
         lines.stream().map(line -> {
-                ReadableUserAgent lineP  = parser.parse(line);
+            if(line.indexOf("HTTP/1.1") > 0) {
+                //save cpu for parser, remove start of line. because it is not relevant
+                String line2 = line.substring(line.indexOf("HTTP/1.1"));
+                line = line2;
+            }
+            ReadableUserAgent lineP  = parser.parse(line);
                 return lineP;
         })
-        .map(parser -> createUaParser(parser))
-        .forEach(uaParserFields -> {
-            logger.debug("lines: {} uaFields: {}", lines, uaParserFields);
-            summary.getOsStats().calcStatistics(uaParserFields);
-            summary.getBrowserStats().calcBrowserStatistics(uaParserFields);
-            logger.debug("Total handle: " + summary.addNumOfHandleRows());
+                .map(parser -> createUaParser(parser))
+                .forEach(uaParserFields -> {
+                    logger.debug("lines: {} uaFields: {}", lines, uaParserFields);
+                    summary.getOsStats().calcStatistics(uaParserFields);
+                    summary.getBrowserStats().calcBrowserStatistics(uaParserFields);
+                    logger.debug("Total handle: " + summary.addNumOfHandleRows());
 
         });
         if(summary.getNumOfReadRows()-summary.getNumOfHandleRows() < 10) {

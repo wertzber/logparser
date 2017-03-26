@@ -31,6 +31,12 @@ public class FileReader {
         }
     }
 
+    /**
+     *
+     * @return Empty in case of EOF.
+     *        ERROR_READ in case of exception.
+     *        string line in case of noraml read.
+     */
     public Optional<String> getNextLine() {
 
         try {

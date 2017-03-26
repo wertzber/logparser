@@ -58,9 +58,7 @@ public class FlowManager {
 
     public FlowManager(){
         this(DEFAULT_PATH);
-
     }
-
 
     public void startFlow() {
         long startTime = System.currentTimeMillis();
@@ -95,8 +93,6 @@ public class FlowManager {
 
         uaExecutor.shutdown();
         ipExecutor.shutdown();
-
-
     }
 
     private void countLinesForReference() {

@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by eladw on 3/26/17.
+ * Report the total percentage.
  */
 public class Report {
 
@@ -20,8 +21,8 @@ public class Report {
                 (newNum,oldNum)-> newNum + oldNum ));
         sb.append("Total OS stats:").append(totalOs).append("\n");
         summary.getOsStats().getOsStatsMap().forEach((k, v) -> {
-            sb.append(k).append(":").append(String.format("%.2f",  (v.longValue() / (double)totalOs.longValue())))
-                    .append("\n");
+            sb.append(k).append(":  ").append(String.format("%.2f",  (v.longValue() / (double)totalOs.longValue())))
+                    .append("%\n");
         });
         sb.append("================");
 
@@ -31,8 +32,8 @@ public class Report {
                 (newNum, oldNum) -> newNum + oldNum));
         sb.append("Total Browser stats:").append(totalBrowser).append("\n");
         summary.getBrowserStats().getBrowserStatsMap().forEach((k, v) -> {
-            sb.append(k).append(":").append(String.format("%.2f", (v.longValue() / (double) totalBrowser.longValue())))
-                    .append("\n");
+            sb.append(k).append(":  ").append(String.format("%.2f", (v.longValue() / (double) totalBrowser.longValue())))
+                    .append("%\n");
         });
         sb.append("================");
 
@@ -41,8 +42,8 @@ public class Report {
                 (newNum, oldNum) -> newNum + oldNum));
         sb.append("Total IP stats:").append(totalIps).append("\n");
         summary.getIpStats().getIpStatsMap().forEach((k, v) -> {
-            sb.append(k).append(":").append(String.format("%.6f", (v.longValue() / (double) totalIps.longValue())))
-                    .append("\n");
+            sb.append(k).append(":  ").append(String.format("%.6f", (v.longValue() / (double) totalIps.longValue())))
+                    .append("%\n");
         });
 
         return sb.toString();
