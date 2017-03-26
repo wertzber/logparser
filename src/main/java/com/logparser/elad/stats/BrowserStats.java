@@ -4,6 +4,8 @@ import com.logparser.elad.model.UAParserFields;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -14,7 +16,7 @@ public class BrowserStats {
 
     private static final Logger logger = LoggerFactory.getLogger(BrowserStats.class);
 
-    private ConcurrentHashMap<String,LongAdder> browserStats;
+    private Map<String,LongAdder> browserStats;
 
     public BrowserStats(){
         browserStats = new ConcurrentHashMap<>();
@@ -35,7 +37,7 @@ public class BrowserStats {
         logger.info(browserStats.toString());
     }
 
-    public ConcurrentHashMap<String, LongAdder> getBrowserStatsMap() {
+    public Map<String, LongAdder> getBrowserStatsMap() {
         return browserStats;
     }
 

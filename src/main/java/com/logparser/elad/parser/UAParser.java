@@ -46,14 +46,14 @@ public class UAParser implements Runnable {
                     logger.debug("lines: {} uaFields: {}", lines, uaParserFields);
                     summary.getOsStats().calcStatistics(uaParserFields);
                     summary.getBrowserStats().calcBrowserStatistics(uaParserFields);
-                    logger.debug("Total handle: " + summary.addNumOfHandleRows());
+                    logger.debug("so far handle: " + summary.addNumOfHandleRows());
 
         });
         if(summary.getNumOfReadRows()-summary.getNumOfHandleRows() < 10) {
             logger.info("## Done ###");
             FlowManager.latch.countDown();
         }
-        logger.info("handles {} lines from total read: {}", summary.getNumOfHandleRows(), summary.getNumOfReadRows());
+        logger.info("so far handles {} lines from total: {}", summary.getNumOfHandleRows(), summary.getNumOfReadRows());
 
     }
 

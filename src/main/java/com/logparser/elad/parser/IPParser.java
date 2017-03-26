@@ -40,11 +40,16 @@ public class IPParser implements Runnable{
 
     @Override
     public void run() {
-        lines.stream().map(line -> getIPV4(line))
-                .filter(ipResult-> ipResult!=null)
-                .forEach(ip -> {
-                    logger.debug("adding ip {}", ip);
-                    summary.getIpStats().calcIPStatistics(ip);
-                });
+        try {
+            lines.stream().map(line -> getIPV4(line))
+                    .filter(ipResult -> ipResult != null)
+                    .forEach(ip -> {
+                        logger.debug("adding ip {}", ip);
+                        summary.getIpStats().calcIPStatistics(ip);
+                    });
+        } catch (Exception e){
+            logger.error("run failure", e);
+        }
+
     }
 }

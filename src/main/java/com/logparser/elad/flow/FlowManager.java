@@ -2,11 +2,9 @@ package com.logparser.elad.flow;
 
 import com.logparser.elad.file.FileReader;
 import com.logparser.elad.model.Summary;
-import com.logparser.elad.model.UAParserFields;
 import com.logparser.elad.parser.IPParser;
 import com.logparser.elad.parser.UAParser;
 import com.logparser.elad.report.Report;
-import com.sun.tools.javac.comp.Flow;
 import net.sf.uadetector.UserAgentStringParser;
 import net.sf.uadetector.service.UADetectorServiceFactory;
 import org.slf4j.Logger;

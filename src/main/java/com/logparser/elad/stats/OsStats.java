@@ -4,6 +4,8 @@ import com.logparser.elad.model.UAParserFields;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -14,7 +16,7 @@ public class OsStats {
 
     private static final Logger logger = LoggerFactory.getLogger(OsStats.class);
 
-    private ConcurrentHashMap<String,LongAdder> osStats;
+    private Map<String,LongAdder> osStats;
 
     public OsStats(){
         osStats = new ConcurrentHashMap<>();
@@ -38,7 +40,7 @@ public class OsStats {
         logger.info(osStats.toString());
     }
 
-    public ConcurrentHashMap<String, LongAdder> getOsStatsMap() {
+    public Map<String, LongAdder> getOsStatsMap() {
         return osStats;
     }
 
