@@ -32,6 +32,16 @@ public class Report {
             sb.append(k).append(":").append(String.format("%.2f", (v.longValue() / (double) totalBrowser.longValue())))
                     .append("\n");
         });
+
+        AtomicLong totalIps = new AtomicLong(0);
+        summary.getIpStats().getIpStatsMap().forEach((k, v) -> totalIps.accumulateAndGet(v.longValue(),
+                (newNum, oldNum) -> newNum + oldNum));
+        sb.append("Total IP stats:").append(totalIps).append("\n");
+        summary.getIpStats().getIpStatsMap().forEach((k, v) -> {
+            sb.append(k).append(":").append(String.format("%.2f", (v.longValue() / (double) totalIps.longValue())))
+                    .append("\n");
+        });
+
         return sb.toString();
     }
 

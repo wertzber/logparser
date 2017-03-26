@@ -28,7 +28,9 @@ public class OsStats {
         } catch (Exception e) {
             logger.error("failed to calculate os statistics ", e );
         }
-        logger.info(osStats.toString());
+        if(logger.isDebugEnabled()){
+            logger.debug(osStats.toString());
+        }
 
     }
 

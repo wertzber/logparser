@@ -1,6 +1,7 @@
 package com.logparser.elad.model;
 
 import com.logparser.elad.stats.BrowserStats;
+import com.logparser.elad.stats.IPStats;
 import com.logparser.elad.stats.OsStats;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -16,10 +17,12 @@ public class Summary {
 
     private OsStats osStats;
     private BrowserStats browserStats;
+    private IPStats ipStats;
 
     public Summary(){
         osStats = new OsStats();
         browserStats = new BrowserStats();
+        ipStats = new IPStats();
 
     }
 
@@ -47,6 +50,10 @@ public class Summary {
 
     public BrowserStats getBrowserStats() {
         return browserStats;
+    }
+
+    public IPStats getIpStats() {
+        return ipStats;
     }
 
     @Override

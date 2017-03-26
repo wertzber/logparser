@@ -3,6 +3,7 @@ package com.logparser.elad.flow;
 import com.logparser.elad.file.FileReader;
 import com.logparser.elad.model.Summary;
 import com.logparser.elad.model.UAParserFields;
+import com.logparser.elad.parser.IPParser;
 import com.logparser.elad.parser.UAParser;
 import com.logparser.elad.report.Report;
 import net.sf.uadetector.UserAgentStringParser;
@@ -31,6 +32,8 @@ public class FlowManager {
 
     private static final Logger logger = LoggerFactory.getLogger(FlowManager.class);
     public static final int UA_PARSERS_THREADS = 10;
+    public static final int IP_PARSERS_THREADS = 5;
+
     public static final int INITIAL_LINES_CAPACITY = 300;
     public static final int BULK_CAPACITY = 500;
 
@@ -38,6 +41,8 @@ public class FlowManager {
     private FileReader fileReader;
     private Summary summary;
     ExecutorService uaExecutor = Executors.newFixedThreadPool(UA_PARSERS_THREADS); //start new thread pool
+    ExecutorService ipExecutor = Executors.newFixedThreadPool(IP_PARSERS_THREADS); //start new thread pool
+
     private UserAgentStringParser parser;
 
     public static CountDownLatch latch = new CountDownLatch(1);
@@ -70,12 +75,15 @@ public class FlowManager {
                 bulkOfLines.add(line.get());
                 if(bulkOfLines.size() % BULK_CAPACITY == 0){
                     uaExecutor.execute(new UAParser(parser, bulkOfLines, summary));
+                    ipExecutor.execute(new IPParser(bulkOfLines,summary));
                     bulkOfLines = new ArrayList<>(INITIAL_LINES_CAPACITY);
                 }
             }
         }
         //for last lines
         uaExecutor.execute(new UAParser(parser, bulkOfLines, summary));
+        ipExecutor.execute(new IPParser(bulkOfLines, summary));
+
         try {
             latch.await(120, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
