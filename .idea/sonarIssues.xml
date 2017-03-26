@@ -13,6 +13,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../async-messaging2/common/src/main/resources/logback.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../async-messaging2/facade/src/main/java/com/liveperson/messaging/async/facade/utils/ZkLeaderSelectorUmsImpl.java">
           <value>
             <set />
@@ -69,6 +74,26 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/logparser/elad/stats/OsStats.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/resources/all10">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/resources/all2">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/resources/all4">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/resources/all8">
           <value>
             <set />
           </value>

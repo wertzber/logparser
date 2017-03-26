@@ -4,10 +4,12 @@ import com.logparser.elad.file.FileReader;
 import com.logparser.elad.model.Summary;
 import com.logparser.elad.model.UAParserFields;
 import com.logparser.elad.parser.UAParser;
+import com.logparser.elad.report.Report;
 import net.sf.uadetector.UserAgentStringParser;
 import net.sf.uadetector.service.UADetectorServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,8 +18,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by eladw on 3/25/17.
@@ -26,48 +30,59 @@ import java.util.concurrent.Executors;
 public class FlowManager {
 
     private static final Logger logger = LoggerFactory.getLogger(FlowManager.class);
-    public static final int PRINT_PROGRESS = 300;
     public static final int UA_PARSERS_THREADS = 10;
-    public static final int INITIAL_LINES_CAPACITY = 500;
+    public static final int INITIAL_LINES_CAPACITY = 300;
+    public static final int BULK_CAPACITY = 500;
+
 
     private FileReader fileReader;
     private Summary summary;
     ExecutorService uaExecutor = Executors.newFixedThreadPool(UA_PARSERS_THREADS); //start new thread pool
     private UserAgentStringParser parser;
 
+    public static CountDownLatch latch = new CountDownLatch(1);
+
 
 
     public FlowManager(){
-        fileReader = new FileReader("/Users/eladw/git/logparser/src/main/resources/all");
+
+        fileReader = new FileReader("/Users/eladw/git/logparser/src/main/resources/all10");
         summary = new Summary();
         parser = UADetectorServiceFactory.getResourceModuleParser();
     }
 
     public void startFlow() {
-
+        long startTime = System.currentTimeMillis();
         boolean stop = false;
         List<String> bulkOfLines = new ArrayList<>(INITIAL_LINES_CAPACITY);
+        try {
+            long count = Files.lines(Paths.get(fileReader.getFilename())).count();
+            logger.info("Expect {} lines", count);
+        } catch (IOException e) {
+            logger.warn("Failed reading file", e);
+        }
+
         while(!stop){ //todo - fix and make it more elegant
             Optional<String> line = fileReader.getNextLine();
-            if(summary.getNumOfReadRows() % PRINT_PROGRESS == 0){
-                logger.info("So far read {} lines", summary.getNumOfReadRows());
-            }
             if (!checkLineValidOutput(line)) {
                 stop=true;
             } else {
                 bulkOfLines.add(line.get());
-                if(bulkOfLines.size() % INITIAL_LINES_CAPACITY == 0){
+                if(bulkOfLines.size() % BULK_CAPACITY == 0){
                     uaExecutor.execute(new UAParser(parser, bulkOfLines, summary));
+                    bulkOfLines = new ArrayList<>(INITIAL_LINES_CAPACITY);
                 }
             }
         }
         //for last lines
         uaExecutor.execute(new UAParser(parser, bulkOfLines, summary));
-
-
-
-
-
+        try {
+            latch.await(120, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            logger.error("Latch wait failure", e);
+        }
+        logger.info("Total exe time {} msec", System.currentTimeMillis() - startTime);
+        logger.info(Report.generateReport(summary));
 
     }
 

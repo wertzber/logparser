@@ -20,14 +20,15 @@ public class OsStats {
         osStats = new ConcurrentHashMap<>();
     }
 
-    public void calOsStatistics(UAParserFields uaParserFields){
+    public void calcStatistics(UAParserFields uaParserFields){
         try {
-            if(uaParserFields != null && !uaParserFields.getOsName().isEmpty()){
+            if(uaParserFields != null && !uaParserFields.getOsName().isEmpty() && uaParserFields.getOsName().length()> 1){
                 osStats.computeIfAbsent(uaParserFields.getOsName(), k -> new LongAdder()).increment();
             }
         } catch (Exception e) {
             logger.error("failed to calculate os statistics ", e );
         }
+        logger.info(osStats.toString());
 
     }
 

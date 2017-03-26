@@ -20,10 +20,10 @@ public class BrowserStats {
         browserStats = new ConcurrentHashMap<>();
     }
 
-    public void calBrowserStatistics(UAParserFields uaParserFields){
+    public void calcBrowserStatistics(UAParserFields uaParserFields){
         try {
-            if(uaParserFields != null && !uaParserFields.getBrowser().isEmpty()) {
-                browserStats.computeIfAbsent(uaParserFields.getOsName(), k -> new LongAdder()).increment();
+            if(uaParserFields != null && !uaParserFields.getBrowser().isEmpty() && uaParserFields.getBrowser().length()>1) {
+                browserStats.computeIfAbsent(uaParserFields.getBrowser(), k -> new LongAdder()).increment();
             }
         } catch (Exception e) {
             logger.error("failed to calculate os statistics ", e );
